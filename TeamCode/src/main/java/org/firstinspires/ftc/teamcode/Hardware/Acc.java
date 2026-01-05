@@ -56,7 +56,7 @@ public class Acc {
     }
 
     public void startIntake() {
-        IN.setPower(0.8);
+        IN.setPower(0.9);
         SW.setPower(-1);
     }
 
@@ -65,6 +65,14 @@ public class Acc {
         SW.setPower(0);
     }
 
+    public void slowIntake(){
+        IN.setPower(0.7);
+    }
+
+    public void rev(){
+        SL.setVelocity(1000);
+        SR.setVelocity(1000);
+    }
     public void OutTake(){
         IN.setPower(-1);
     }
@@ -88,10 +96,26 @@ public class Acc {
         return false;
     }
 
+    public boolean VeloShoot(){
+        if(Math.abs(SR.getVelocity() )+Math.abs((SL.getVelocity() )/2) - targetVelocity> 30){
+            lightServo.setPosition(a);
+            SW.setPower(1);
+            Wait.mySleep(100);
+            startIntake();
+            return true;
+        }
+        else {
+            SW.setPower(0);
+            lightServo.setPosition(0.277);
+        }
+        return false;
+    }
+
     public boolean shoot(){
         if (Math.abs(getShooterVelocity() - targetVelocity) < 30) {
             lightServo.setPosition(a);
             startIntake();
+            Wait.mySleep(200);
             SW.setPower(1);
             return true;
         }else{

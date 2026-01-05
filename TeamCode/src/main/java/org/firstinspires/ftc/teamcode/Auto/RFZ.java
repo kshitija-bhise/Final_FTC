@@ -14,19 +14,18 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import org.firstinspires.ftc.teamcode.Hardware.Acc;
 import org.firstinspires.ftc.teamcode.Util.Wait;
 import org.firstinspires.ftc.teamcode.Vision.CameraAlign;
-import org.firstinspires.ftc.teamcode.Vision.LimelightAligner;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 @Autonomous
 @Configurable // Panels
-public class RedFarZone extends OpMode {
+public class RFZ extends OpMode {
 
     private TelemetryManager panelsTelemetry; // Panels Telemetry instance
     public Follower follower; // Pedro Pathing follower instance
     int pathState = 0; // Current autonomous path state (state machine)
     PathChain paths;
     Acc acc;
-    LimelightAligner aligner;
+    CameraAlign cameraAlign;
 
     @Override
     public void init() {
@@ -34,7 +33,7 @@ public class RedFarZone extends OpMode {
         panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
 
         follower = Constants.createFollower(hardwareMap);
-        aligner = new LimelightAligner(hardwareMap);
+        cameraAlign = new CameraAlign(hardwareMap);
         follower.setStartingPose(new Pose(82.000, 8.000, Math.toRadians(270)));
 
         paths = follower
@@ -44,96 +43,67 @@ public class RedFarZone extends OpMode {
                 .addPath(
                         new BezierLine(
                                 new Pose(82.000, 8.000),
+
                                 new Pose(82.000, 18.000)
                         )
-                )
-                .setLinearHeadingInterpolation(Math.toRadians(270), Math.toRadians(250))
-                //align==1
+                ).setLinearHeadingInterpolation(Math.toRadians(270), Math.toRadians(250))
+
+                //collect == 1
                 .addPath(
-                        new BezierLine(
+                        new BezierCurve(
                                 new Pose(82.000, 18.000),
-                                new Pose(93.000, 32.000)
+                                new Pose(79.789, 38.947),
+                                new Pose(131.526, 33.000)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(245), Math.toRadians(0))
-                //collect1 == 2
+                ).setTangentHeadingInterpolation()
+
+
+                //shoot == 2
                 .addPath(
                         new BezierLine(
-                                new Pose(93.000, 32.000),
-                                new Pose(131.000, 34.737)
-                        )
-                )
-                .setConstantHeadingInterpolation(Math.toRadians(0))
-                //shoot2 == 3
-                .addPath(
-                        new BezierLine(
-                                new Pose(131.000, 34.737),
+                                new Pose(131.526, 35.947),
                                 new Pose(82.000, 18.000)
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(250))
-                //align2 == 4
+
+                //collect == 3
                 .addPath(
-                        new BezierLine(
+                        new BezierCurve(
                                 new Pose(82.000, 18.000),
-
-                                new Pose(96.474, 58.000)
+                                new Pose(81.000, 65.000),
+                                new Pose(129.895, 57.000)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(250), Math.toRadians(0))
-                //collect2 == 5
+                ).setTangentHeadingInterpolation()
+
+                //shoot == 4
                 .addPath(
                         new BezierLine(
-                                new Pose(96.474, 58.000),
+                                new Pose(130.737, 59.474),
 
-                                new Pose(130.000, 59.000)
+                                new Pose(84.000, 82.000)
                         )
                 )
-                .setConstantHeadingInterpolation(Math.toRadians(0))
-//                //open gate == 6
-//                .addPath(
-//                        new BezierLine(new Pose(124.000, 59.000), new Pose(124.000, 64.632))
-//                )
-//                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(270))
-//                //gate open == 7
-//                .addPath(
-//                        new BezierLine(new Pose(124.000, 64.632), new Pose(129.263, 64.632))
-//                )
-//                .setConstantHeadingInterpolation(Math.toRadians(270))
-                 //shoot3 == 6
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(225))
+
+                //collect == 5
                 .addPath(
                         new BezierLine(
-                                new Pose(130.000, 59.000),
+                                new Pose(84.000, 82.000),
 
-                                new Pose(89.000, 89.000)
-                        )
-                ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(225))
-                //align3 == 7
-                .addPath(
-                        new BezierLine(
-                                new Pose(89.000, 89.000),
-
-                                new Pose(89.000, 84.105)
+                                new Pose(128.316, 81.737)
                         )
                 ).setTangentHeadingInterpolation()
-                //collect3 == 8
+
+                //shoot == 6
                 .addPath(
                         new BezierLine(
-                                new Pose(89.000, 84.105),
+                                new Pose(130.737, 59.474),
 
-                                new Pose(130.105, 83.368)
+                                new Pose(84.000, 82.000)
                         )
-                ).setTangentHeadingInterpolation()
-                //shoot4 == 9
-                .addPath(
-                        new BezierLine(
-                                new Pose(130.105, 83.368),
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(225))
 
-                                new Pose(89.000, 90.000)
-                        )
-                ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(225))
-//                //parks == 10
-//                .addPath(
-//                        new BezierLine(new Pose(89.000, 90.000), new Pose(89.000, 80.000))
-//                )
-//                .setLinearHeadingInterpolation(Math.toRadians(225), Math.toRadians(0))
                 .build();
 
         follower.followPath(paths.getPath(pathState));
@@ -145,10 +115,8 @@ public class RedFarZone extends OpMode {
     public void loop() {
         follower.update();
         if(!follower.isBusy()){
-            if (pathState == 0 || pathState == 3){
+            if (pathState == 0 || pathState == 2){
                 acc.startNearShoot();
-aligner.alignToAprilTag();
-                Wait.mySleep(200);
                 while(!acc.Goal()){
                     acc.startFarShoot();
                 }
@@ -158,20 +126,15 @@ aligner.alignToAprilTag();
                 follower.setMaxPower(0.9);
             }
 
-            if(pathState == 2 || pathState == 5 || pathState == 8){
+            if(pathState == 1 || pathState == 3 || pathState == 5){
                 acc.slowIntake();
                 Wait.mySleep(200);
                 acc.stopIntake();
                 acc.setLED(0.333);
-                follower.setMaxPower(0.8);
-            }
-
-            if (pathState == 1 || pathState == 4 || pathState == 7){
-                acc.setLED(0.611);
                 follower.setMaxPower(0.7);
             }
 
-            if (pathState == 6 || pathState == 9){
+            if (pathState == 4 || pathState == 6){
                 acc.startNearShoot();
                 while (!acc.Goal()){
                     acc.startNearShoot();

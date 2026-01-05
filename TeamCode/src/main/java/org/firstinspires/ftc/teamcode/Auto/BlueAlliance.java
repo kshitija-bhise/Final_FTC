@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.Util.Wait;
 import org.firstinspires.ftc.teamcode.Vision.CameraAlign;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
-
+//@Disabled
 @Autonomous
 @Configurable // Panels
 public class BlueAlliance extends OpMode {
@@ -42,70 +42,70 @@ public class BlueAlliance extends OpMode {
                 .pathBuilder()
                 //shoot1 == 0
                 .addPath(
-                        new BezierLine(new Pose(33.645, 137.047), new Pose(60.000, 84.000))
+                        new BezierLine(new Pose(33.0, 137.0), new Pose(58.000, 90.000))
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(315))
                 //align1 == 1
                 .addPath(
-                        new BezierLine(new Pose(60.000, 84.000), new Pose(55.000, 76.000))
+                        new BezierLine(new Pose(58.000, 90.000), new Pose(55.000, 90.000))
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(315), Math.toRadians(180))
+                .setLinearHeadingInterpolation(Math.toRadians(320), Math.toRadians(180))
                 //Collect1 == 2
                 .addPath(
-                        new BezierLine(new Pose(55.000, 76.000), new Pose(20.000, 76.000))
+                        new BezierLine(new Pose(55.000, 90.000), new Pose(19.000, 90.000))
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(180))
                 //openGate1 == 3
+//                .addPath(
+//                        new BezierLine(new Pose(19.000, 90.000), new Pose(22.000, 82.000))
+//                )
+//                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(90))
+//                //openGate2 == 4
+//                .addPath(
+//                        new BezierLine(new Pose(22.000, 82.000), new Pose(18.500, 82.000))
+//                )
+//                .setConstantHeadingInterpolation(Math.toRadians(90))
+                //shoot2 == 3
                 .addPath(
-                        new BezierLine(new Pose(20.000, 76.000), new Pose(20.000, 70.000))
-                )
-                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(90))
-                //openGate2 == 4
-
-                .addPath(
-                        new BezierCurve(new Pose(20.000, 70.000), new Pose(10.000, 70.000))
-                )
-                .setConstantHeadingInterpolation(Math.toRadians(90))
-                //shoot2 == 5
-                .addPath(
-                        new BezierLine(new Pose(10.000, 70.000), new Pose(60.000, 84.000))
-                )
-                .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(315))
-                //align2 == 6
-                .addPath(
-                        new BezierLine(new Pose(60.000, 84.000), new Pose(55.000, 51.000))
-                )
-                .setLinearHeadingInterpolation(Math.toRadians(315), Math.toRadians(180))
-                //collect2 == 7
-                .addPath(
-                        new BezierLine(new Pose(55.000, 51.000), new Pose(5.000, 51.000))
-                )
-                .setConstantHeadingInterpolation(Math.toRadians(180))
-                //shoot3pt1 == 8
-                .addPath(
-                        new BezierLine(new Pose(5.000, 51.000), new Pose(30.000, 51.000))
-                )
-                .setConstantHeadingInterpolation(Math.toRadians(180))
-                //shoot3pt2 == 9
-                .addPath(
-                        new BezierLine(new Pose(30.000, 51.000), new Pose(60.000, 84.000))
+                        new BezierLine(new Pose(19.000, 90.000), new Pose(58.000, 90.000))
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(315))
-                //align3 == 10
+//                //align2 == 4
                 .addPath(
-                        new BezierLine(new Pose(60.000, 84.000), new Pose(55.000, 28.000))
+                        new BezierLine(new Pose(58.000, 90.000), new Pose(55.000, 64.000))
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(315), Math.toRadians(180))
-                //collect3 == 11
+                //collect2 == 5
                 .addPath(
-                        new BezierLine(new Pose(55.000, 28.000), new Pose(5.000, 28.000))
+                        new BezierLine(new Pose(55.000, 64.000), new Pose(10.000, 64.000))
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(180))
-                //shoot4 == 12
+                //shoot3 == 6
                 .addPath(
-                        new BezierLine(new Pose(5.000, 28.000), new Pose(60.000, 15.000))
+                        new BezierLine(new Pose(10.000, 64.000), new Pose(58.000, 90.000))
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(290))
+                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(315))
+                //align3 == 7
+                .addPath(
+                        new BezierLine(new Pose(58.000, 90.000), new Pose(55.000, 45.000))
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(315), Math.toRadians(180))
+                //collect3 == 8
+                .addPath(
+                        new BezierLine(new Pose(55.000, 40.000), new Pose(15.000, 40.000))
+                )
+                .setConstantHeadingInterpolation(Math.toRadians(180))
+                //shoot4 == 9
+                .addPath(
+                        new BezierLine(new Pose(15.000, 45.000), new Pose(55.000, 23.000))
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(293))
+                //park == 10
+                .addPath(
+                        new BezierLine(new Pose(55.000, 30.000), new Pose(50.000, 25.000))
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(290), Math.toRadians(180))
+//                .setBrakingStart(0.1)
                 .build();
 
 
@@ -119,31 +119,55 @@ public class BlueAlliance extends OpMode {
     public void loop() {
         follower.update();
         if(!follower.isBusy()){
-            if(pathState == 0 || pathState == 5 || pathState == 9){
-                cameraAlign.autoAlign();
-                Wait.mySleep(800);
+            if(pathState == 0 || pathState == 3 || pathState == 6){
                 acc.startNearShoot();
-                while(!acc.shoot()){
+                while(!acc.Goal()){
                     acc.startNearShoot();
                 }
-                Wait.mySleep(1500);
+                Wait.mySleep(200);
                 acc.stopShooter();
                 acc.startIntake();
+                follower.setMaxPower(0.8);
             }
-            if( pathState == 12){
-                acc.startFarShoot();
-                while(!acc.shoot()){
+
+//            if(pathState == 3){
+//                acc.setLED(0.555);
+//                follower.setMaxPower(0.5);
+//            }
+//
+//            if(pathState == 4){
+//                Wait.mySleep(200);
+//                acc.setLED(0.555);
+//                follower.setMaxPower(0.7);
+//            }
+
+            if (pathState == 1 || pathState == 4 || pathState == 7){
+
+                follower.setMaxPower(0.6);
+            }
+
+            if (pathState == 2 || pathState == 5 || pathState == 8){
+                Wait.mySleep(500);
+                acc.rev();
+                acc.stopIntake();
+                acc.setLED(0.338);
+                follower.setMaxPower(0.8);
+            }
+
+            if(pathState == 9){
+                cameraAlign.autoAlign();
+                acc.startNearShoot();
+                while(!acc.Goal()){
                     acc.startFarShoot();
                 }
-                Wait.mySleep(1500);
+                Wait.mySleep(200);
                 acc.stopShooter();
-            }
-            if( pathState == 4){
-                Wait.mySleep(1000);
-
+                follower.setMaxPower(0.9);
             }
 
-            if(pathState == 2 || pathState == 7|| pathState == 11){acc.stopIntake();}
+            if(pathState == 10){
+                follower.setMaxPower(0.8);
+            }
 
             pathState++;
             follower.followPath(paths.getPath(pathState));

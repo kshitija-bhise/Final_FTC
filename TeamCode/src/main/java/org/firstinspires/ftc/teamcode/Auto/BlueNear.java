@@ -21,7 +21,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 //Blue Alliance Code
 @Autonomous
 @Configurable // Panels
-public class BAAutonomous extends OpMode {
+public class BlueNear extends OpMode {
 
     private TelemetryManager panelsTelemetry; // Panels Telemetry instance
     public Follower follower; // Pedro Pathing follower instance
@@ -47,7 +47,7 @@ public class BAAutonomous extends OpMode {
                 .addPath(
                         new BezierLine(new Pose(33.0, 137.0), new Pose(58.000, 90.000))
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(320))
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(315))
                 //align1 == 1
                 .addPath(
                         new BezierLine(new Pose(58.000, 90.000), new Pose(55.000, 90.000))
@@ -60,32 +60,32 @@ public class BAAutonomous extends OpMode {
                 .setConstantHeadingInterpolation(Math.toRadians(180))
                 //openGate1 == 3
                 .addPath(
-                        new BezierLine(new Pose(19.000, 90.000), new Pose(22.000, 84.000))
+                        new BezierLine(new Pose(19.000, 90.000), new Pose(22.000, 82.000))
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(90))
                 //openGate2 == 4
                 .addPath(
-                        new BezierLine(new Pose(22.000, 84.000), new Pose(18.500, 84.000))
+                        new BezierLine(new Pose(22.000, 82.000), new Pose(18.500, 82.000))
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(90))
                 //shoot2 == 5
                 .addPath(
-                        new BezierLine(new Pose(18.500, 84.000), new Pose(58.000, 90.000))
+                        new BezierLine(new Pose(18.500, 82.000), new Pose(58.000, 90.000))
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(315))
 //                //align2 == 6
                 .addPath(
-                        new BezierLine(new Pose(58.000, 90.000), new Pose(55.000, 68.000))
+                        new BezierLine(new Pose(58.000, 90.000), new Pose(55.000, 64.000))
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(315), Math.toRadians(180))
                 //collect2 == 7
                 .addPath(
-                        new BezierLine(new Pose(55.000, 68.000), new Pose(15.000, 68.000))
+                        new BezierLine(new Pose(55.000, 64.000), new Pose(15.000, 60.000))
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(180))
                 //shoot3 == 8
                 .addPath(
-                        new BezierLine(new Pose(15.000, 68.000), new Pose(58.000, 90.000))
+                        new BezierLine(new Pose(15.000, 60.000), new Pose(58.000, 90.000))
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(315))
                 //align3 == 9
@@ -95,12 +95,12 @@ public class BAAutonomous extends OpMode {
                 .setLinearHeadingInterpolation(Math.toRadians(315), Math.toRadians(180))
                 //collect3 == 10
                 .addPath(
-                        new BezierLine(new Pose(55.000, 45.000), new Pose(15.000, 45.000))
+                        new BezierLine(new Pose(55.000, 40.000), new Pose(15.000, 40.000))
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(180))
                 //shoot4 == 11
                 .addPath(
-                        new BezierLine(new Pose(15.000, 45.000), new Pose(55.000, 30.000))
+                        new BezierLine(new Pose(15.000, 45.000), new Pose(55.000, 23.000))
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(293))
                 //park == 12
@@ -122,34 +122,33 @@ public class BAAutonomous extends OpMode {
         follower.update();
         if(!follower.isBusy()){
             if(pathState == 0 || pathState == 5 || pathState == 8){
-                cameraAlign.autoAlign();
-                Wait.mySleep(300);
                 acc.startNearShoot();
                 while(!acc.Goal()){
                     acc.startNearShoot();
                 }
-                Wait.mySleep(1200);
+                Wait.mySleep(200);
                 acc.stopShooter();
                 acc.startIntake();
-                follower.setMaxPower(0.6);
+                follower.setMaxPower(0.8);
             }
 
             if(pathState == 3){
                 acc.setLED(0.555);
-                follower.setMaxPower(0.4);
+                follower.setMaxPower(0.5);
             }
 
             if(pathState == 4){
-                Wait.mySleep(300);
+                Wait.mySleep(200);
                 acc.setLED(0.555);
-                follower.setMaxPower(0.8);
+                follower.setMaxPower(0.7);
             }
 
             if (pathState == 2 || pathState == 7 || pathState == 10){
                 Wait.mySleep(500);
+                acc.rev();
                 acc.stopIntake();
                 acc.setLED(0.338);
-                follower.setMaxPower(0.8);
+                follower.setMaxPower(0.6);
             }
 
             if(pathState == 11){
@@ -158,13 +157,13 @@ public class BAAutonomous extends OpMode {
                 while(!acc.Goal()){
                     acc.startFarShoot();
                 }
-                Wait.mySleep(800);
+                Wait.mySleep(200);
                 acc.stopShooter();
-                follower.setMaxPower(0.6);
+                follower.setMaxPower(0.8);
             }
 
             if(pathState == 12){
-                follower.setMaxPower(0.6);
+                follower.setMaxPower(0.8);
             }
 
             pathState++;

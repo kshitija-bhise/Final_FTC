@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Teleop;
+package org.firstinspires.ftc.teamcode.TeleOp;
 
 import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.follower;
 
@@ -10,23 +10,28 @@ import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.Hardware.Acc;
 import org.firstinspires.ftc.teamcode.Util.BuildPath;
 import org.firstinspires.ftc.teamcode.Vision.CameraAlign;
 import org.firstinspires.ftc.teamcode.Vision.DistanceEstimator;
+import org.firstinspires.ftc.teamcode.Vision.LimelightAligner;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 import java.util.List;
 
-@TeleOp(name = "TURNTEST")
-public class TurnTest extends LinearOpMode {
+@TeleOp(name = "Red Alliance TeleOp")
+public class RedAllianceTele extends LinearOpMode {
 
     Follower follower;
     CameraAlign cameraAlign;
     DistanceEstimator distanceEstimator;
     Limelight3A limelight;
+    Acc acc;
+    LimelightAligner aligner;
 
-    double desiredAngleDeg = 135;
+    double desiredAngleDeg = 225;
 
     boolean isTeleOpDriveStarted = false;
 
@@ -36,6 +41,11 @@ public class TurnTest extends LinearOpMode {
         follower = Constants.createFollower(hardwareMap);
         follower.startTeleopDrive(true);
         follower.update();
+
+        acc = new Acc(hardwareMap);
+
+        aligner = new LimelightAligner(hardwareMap);
+
 
         follower.setStartingPose(new Pose(0, 0, Math.toRadians(180)));
 
@@ -49,7 +59,12 @@ public class TurnTest extends LinearOpMode {
         );
 
         follower.startTeleopDrive(true);
+        Servo lock = hardwareMap.get(Servo.class,"lock");
+        lock.setPosition(0);
+        limelight.pipelineSwitch(1);
         follower.update();
+
+        waitForStart();
 
         while (opModeIsActive()) {
 
@@ -61,15 +76,54 @@ public class TurnTest extends LinearOpMode {
             double headingDeg = Math.toDegrees(pose.getHeading());
             double error = desiredAngleDeg - headingDeg;
 
-            if (gamepad1.bWasPressed()) {
+            if(gamepad2.right_trigger > 0.1){
+                while (gamepad2.right_trigger > 0.1){
+                    acc.startNearShoot();
+                    acc.Goal();
+                }
+            } else if (gamepad2.y){
+                acc.rev();
+            } else if(gamepad2.left_trigger > 0.1){
+                while (gamepad2.left_trigger > 0.1){
+                    acc.startFarShoot();
+                    acc.shoot();
+                }
+            }else {
+                acc.stopShooter();
+            }
+
+            if(gamepad1.y){
+                lock.setPosition(0.2);
+            }
+            if(gamepad2.left_bumper){
+                acc.startIntake();
+            } else if (gamepad2.right_bumper) {
+                acc.OutTake();
+            } else{
+                acc.stopIntake();
+            }
+
+            if (gamepad1.right_bumper) {
+                telemetry.addData("Pipeline Number",limelight.getLatestResult().getPipelineIndex());
+                if (!aligner.isAligned()) {
+                    aligner.alignToAprilTag();
+                }
+                else {
+                    aligner.stopMotors();
+                    acc.setLED(0.611);
+                    gamepad1.rumble(300);
+                    gamepad2.rumble(300);
+                }
+                acc.setLED(0.277);
+                telemetry.addData("Ty", distanceEstimator.getTy());
+            }
+            else {
+                acc.setLED(0.0); // default state
+            }
+
+            if (gamepad1.left_bumper) {
                 follower.followPath(BuildPath.getTurnPath(follower.getPose(), Math.abs(error), error < 0));
                 isTeleOpDriveStarted = false;
-            } else if (gamepad1.b) {
-                if ((!follower.isTurning() && !follower.isBusy()) && !isTeleOpDriveStarted) {
-                    follower.startTeleopDrive(true);
-                    isTeleOpDriveStarted = true;
-                }
-                follower.setTeleOpDrive(-gamepad1.left_stick_y, -gamepad1.left_stick_x, cameraAlign.alignTurnValue(gamepad1.right_stick_x), true);
             } else {
                 boolean isGamePadActive = Math.abs(gamepad1.left_stick_x + gamepad1.left_stick_y + gamepad1.right_stick_x) > 0.02;
                 if (((!follower.isTurning() && !follower.isBusy()) || isGamePadActive) && !isTeleOpDriveStarted) {
@@ -77,6 +131,8 @@ public class TurnTest extends LinearOpMode {
                     isTeleOpDriveStarted = true;
                 }
             }
+            telemetry.update();
+
         }
     }
 
