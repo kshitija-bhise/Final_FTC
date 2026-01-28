@@ -1,4 +1,6 @@
-package org.firstinspires.ftc.teamcode.TeleOp;
+package org.firstinspires.ftc.teamcode.NotNecessary;
+
+import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;
@@ -7,12 +9,15 @@ import com.pedropathing.paths.PathChain;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-import org.firstinspires.ftc.teamcode.Hardware.Acc;
+import org.firstinspires.ftc.teamcode.Mechanism.Acc;
 import org.firstinspires.ftc.teamcode.Vision.CameraAlign;
 import org.firstinspires.ftc.teamcode.Vision.DistanceEstimator;
-import org.firstinspires.ftc.teamcode.Vision.LimelightAligner;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+
+import java.util.function.Supplier;
 
 
 @TeleOp
@@ -22,14 +27,16 @@ public class TeleOpTest extends LinearOpMode {
     DistanceEstimator distanceEstimator;
     Limelight3A limelight;
     Acc acc;
-    LimelightAligner aligner;
+    private Supplier<PathChain> pathChain;
+    public boolean automatedDrive = false;
     public boolean shootfar;
     public boolean shootfardone = false;
     public boolean shootneardone = false;
     public PathChain pathsFar;
     public PathChain pathsNear;
+    public DcMotor RF, RR, LR, LF;
 
-    double desiredAngleDeg = 135;
+    double desiredAngleDeg = 315;
 
     boolean isTeleOpDriveStarted = false;
 
@@ -38,8 +45,19 @@ public class TeleOpTest extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         follower = Constants.createFollower(hardwareMap);
-        follower.startTeleopDrive(true);
-        follower.update();
+
+        RF = hardwareMap.get(DcMotor.class, "RF");
+        RR = hardwareMap.get(DcMotor.class, "RR");
+        LF = hardwareMap.get(DcMotor.class, "LF");
+        LR = hardwareMap.get(DcMotor.class, "LR");
+
+        LR.setDirection(DcMotorSimple.Direction.REVERSE);
+        LF.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        RF.setZeroPowerBehavior(BRAKE);
+        RR.setZeroPowerBehavior(BRAKE);
+        LR.setZeroPowerBehavior(BRAKE);
+        LF.setZeroPowerBehavior(BRAKE);
 
         acc = new Acc(hardwareMap);
 
@@ -54,12 +72,15 @@ public class TeleOpTest extends LinearOpMode {
                 29.5
         );
 
-        follower.startTeleopDrive(true);
         follower.update();
 
         waitForStart();
 
         while (opModeIsActive()) {
+            double x = gamepad1.left_stick_x;
+            double y = -gamepad1.left_stick_y;
+            double rx= gamepad1.left_stick_x;
+
             boolean alignment = false;
             Pose pose = follower.getPose();
             double xRobo = follower.getPose().getX();
@@ -67,16 +88,11 @@ public class TeleOpTest extends LinearOpMode {
             double headingDeg = Math.toDegrees(pose.getHeading());
             if (gamepad1.left_trigger > 0.1) {
                 alignment = true;
-            } else {
-                if (!isTeleOpDriveStarted) {
-                    follower.pausePathFollowing();
-                    follower.startTeleopDrive(true);
-                    isTeleOpDriveStarted=true;
-                }
-
             }
-            follower.setTeleOpDrive(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x, true);
-            follower.update();
+                if (gamepad1.left_bumper){
+                    follower.breakFollowing();
+                    drive(y, x, rx);
+                }
 
             pathsFar = follower
                     .pathBuilder()
@@ -103,19 +119,35 @@ public class TeleOpTest extends LinearOpMode {
                     shootfar = true;
                 }
                 if (!shootfar && !(follower.atPose(new Pose(58, -30), 2, 2, Math.toRadians(2)))) {
-                        follower.followPath(pathsFar);
+
+                    follower.followPath(pathsFar);
                     shootfardone = true;
 
                 }
                 if (shootfar && !follower.atPose(new Pose(55, 23), 2, 2, Math.toRadians(2))) {
-                        follower.followPath(pathsNear);
+                    follower.resumePathFollowing();
+                    follower.followPath(pathsNear);
                     shootneardone = true;
                 }
             }
-            if (gamepad1.right_bumper && !isTeleOpDriveStarted) {
+            if (gamepad1.aWasPressed() && !shootfar && !(follower.atPose(new Pose(58, -30), 2, 2, Math.toRadians(2)))) {
+                follower.followPath(pathChain.get()); //Lazy Curve Generation
+                automatedDrive = true;
+                shootfardone = true;
+            }
+
+            //Stop automated following if the follower is done
+            if (automatedDrive && (gamepad1.bWasPressed() || !follower.isBusy())) {
+                follower.startTeleopDrive();
+                automatedDrive = false;
+            }
+
+
+
+
+            if (gamepad1.right_bumper) {
+                follower.resumePathFollowing();
                 telemetry.addData("Right bumper", "is pressed");
-                follower.startTeleopDrive(true);
-                follower.update();
             }
 
 
@@ -129,7 +161,32 @@ public class TeleOpTest extends LinearOpMode {
 
         }
 
+    }private void drive(double forward, double strafe, double turn) {
+        final double DEAD = 0.05;
+
+        forward = (Math.abs(forward) < DEAD) ? 0 : forward;
+        strafe = (Math.abs(strafe) < DEAD) ? 0 : strafe;
+        turn = (Math.abs(turn) < DEAD) ? 0 : turn;
+
+        double flPower = forward + strafe + turn;
+        double frPower = forward - strafe - turn;
+        double blPower = forward - strafe + turn;
+        double brPower = forward + strafe - turn;
+
+        LF.setPower(flPower);
+        RF.setPower(frPower);
+        LR.setPower(blPower);
+        RR.setPower(brPower);
     }
+
+    public void StopMotors() {
+        LF.setPower(0);
+        LR.setPower(0);
+        RF.setPower(0);
+        RR.setPower(0);
+    }
+
+
 }
 
 

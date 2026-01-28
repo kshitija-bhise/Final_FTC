@@ -1,24 +1,21 @@
-package org.firstinspires.ftc.teamcode.TeleOp;
+package org.firstinspires.ftc.teamcode.NotNecessary;
 
-import com.bylazar.telemetry.TelemetryManager;
 import com.pedropathing.follower.Follower;
-import com.pedropathing.paths.PathChain;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.Hardware.Acc;
-import org.firstinspires.ftc.teamcode.Util.BuildPath;
+import org.firstinspires.ftc.teamcode.Mechanism.Acc;
 import org.firstinspires.ftc.teamcode.Vision.CameraAlign;
 import org.firstinspires.ftc.teamcode.Vision.DistanceEstimator;
 import org.firstinspires.ftc.teamcode.Vision.LimelightAligner;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
-import java.util.function.Supplier;
 
-
+@Disabled
 @TeleOp
 public class teleoptest2 extends LinearOpMode {
     ElapsedTime timer;

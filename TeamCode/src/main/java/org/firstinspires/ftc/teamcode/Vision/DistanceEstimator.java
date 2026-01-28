@@ -30,7 +30,7 @@ public class DistanceEstimator {
             double angleToGoalRadians = angleToGoalDegrees * (3.14159 / 180.0);
 
 
-            return (goalHeightInches - limelightLensHeight) / Math.tan(angleToGoalRadians);
+            return ((goalHeightInches - limelightLensHeight) / Math.tan(angleToGoalRadians)-15);
 
         } else {
             return -1;
@@ -52,7 +52,6 @@ public class DistanceEstimator {
 
 
     public double getTx() {
-        limelight.pipelineSwitch(6);
         LLResult result = limelight.getLatestResult();
         if (result != null && result.isValid()) {
             return result.getTx(); // horizontal offset (deg)
@@ -73,12 +72,5 @@ public class DistanceEstimator {
         return result != null && result.isValid();
     }
 
-    public double getTxNc() {
-        LLResult result = limelight.getLatestResult();
-        if (result != null && result.isValid()) {
-            return result.getTxNC(); // horizontal offset (deg)
-        }
-        return 0;
-    }
 
 }

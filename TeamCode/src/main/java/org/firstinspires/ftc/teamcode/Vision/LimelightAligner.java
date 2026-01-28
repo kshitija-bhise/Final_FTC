@@ -14,8 +14,7 @@ public class LimelightAligner {
     private final Limelight3A limelight;
     private static double Kd = 0.0000005;
     private static double kP = 0.00002;
-    private double minPower = 0.3;
-    private double threshold = 2.0;
+    private final double threshold = 2.0;
     private double lasterror= 0;// degrees65
 
     public LimelightAligner(HardwareMap hardwareMap) {
@@ -31,12 +30,11 @@ public class LimelightAligner {
         RR.setDirection(DcMotor.Direction.FORWARD);
 
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
-        limelight.pipelineSwitch(0);  //keep 1 for red and 0 for blue
+        limelight.pipelineSwitch(1);  //keep 1 for red and 0 for blue
 //        telemetry.setMsTransmissionInterval(11);
         limelight.start();
     }
 
-    /* ================= ALIGN LOGIC ================= */
     public void alignToAprilTag() {
 
         LLResult result = limelight.getLatestResult();
@@ -46,7 +44,7 @@ public class LimelightAligner {
             return;
         }
 
-        double tx = result.getTy();
+        double tx = result.getTx();
         double diff = -(lasterror*Kd);// LEFT / RIGHT error
         double turnPower = -((kP * tx));
         turnPower+=diff;
@@ -56,6 +54,7 @@ public class LimelightAligner {
             return;
         }
 
+        double minPower = 0.3;
         if (Math.abs(turnPower) < minPower) {
             turnPower = Math.signum(turnPower) * minPower;
         }
@@ -69,14 +68,13 @@ public class LimelightAligner {
 
 
     public boolean isAligned() {
-
         LLResult result = limelight.getLatestResult();
 
         if(!result.isValid()){
             return false;
         }
 
-        return Math.abs(result.getTy()) <= threshold;
+        return Math.abs(result.getTx()) <= threshold;
     }
 
 
@@ -95,5 +93,11 @@ public class LimelightAligner {
         LLResult result = limelight.getLatestResult();
 
         return result.getTy();
+    }
+
+    public double getTx(){
+        LLResult result = limelight.getLatestResult();
+
+        return result.getTx();
     }
 }

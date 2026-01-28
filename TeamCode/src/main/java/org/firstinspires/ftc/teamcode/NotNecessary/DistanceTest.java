@@ -1,30 +1,24 @@
-package org.firstinspires.ftc.teamcode.Vision;
+package org.firstinspires.ftc.teamcode.NotNecessary;
 
-import static org.firstinspires.ftc.teamcode.pedroPathing.Constants.driveConstants;
-import static org.firstinspires.ftc.teamcode.pedroPathing.Constants.followerConstants;
-import static org.firstinspires.ftc.teamcode.pedroPathing.Constants.localizerConstants;
-
-import com.pedropathing.follower.Follower;
-import com.pedropathing.paths.PathConstraints;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.Vision.DistanceEstimator;
 
+@Disabled
 @TeleOp
 public class DistanceTest extends OpMode {
     private DistanceEstimator distanceEstimator;
-    private Follower follower;
-    private Limelight3A limelight;
+
     @Override
     public void init() {
-        limelight = hardwareMap.get(Limelight3A.class, "limelight");
-
+        Limelight3A limelight = hardwareMap.get(Limelight3A.class, "limelight");
         limelight.pipelineSwitch(0);
         limelight.start();
 
-        distanceEstimator = new DistanceEstimator(limelight, 6.0, 11.7, 29.5);
+        distanceEstimator = new DistanceEstimator(limelight, 0, 15.5, 29.5);
 
     }
 

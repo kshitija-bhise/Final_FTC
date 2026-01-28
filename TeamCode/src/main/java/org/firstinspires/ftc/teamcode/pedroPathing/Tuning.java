@@ -45,6 +45,7 @@ public class Tuning extends SelectableOpMode {
     @IgnoreConfigurable
     static TelemetryManager telemetryM;
 
+
     @IgnoreConfigurable
     static ArrayList<String> changes = new ArrayList<>();
 

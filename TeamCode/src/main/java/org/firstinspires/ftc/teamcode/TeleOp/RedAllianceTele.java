@@ -1,25 +1,20 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
 
-import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.follower;
-
+import com.bylazar.telemetry.PanelsTelemetry;
+import com.bylazar.telemetry.TelemetryManager;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
-import com.qualcomm.hardware.limelightvision.LLResult;
-import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.teamcode.Hardware.Acc;
+import org.firstinspires.ftc.teamcode.Mechanism.Acc;
 import org.firstinspires.ftc.teamcode.Util.BuildPath;
 import org.firstinspires.ftc.teamcode.Vision.CameraAlign;
 import org.firstinspires.ftc.teamcode.Vision.DistanceEstimator;
 import org.firstinspires.ftc.teamcode.Vision.LimelightAligner;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-
-import java.util.List;
 
 @TeleOp(name = "Red Alliance TeleOp")
 public class RedAllianceTele extends LinearOpMode {
@@ -30,6 +25,7 @@ public class RedAllianceTele extends LinearOpMode {
     Limelight3A limelight;
     Acc acc;
     LimelightAligner aligner;
+    TelemetryManager panelsTelemetry;
 
     double desiredAngleDeg = 225;
 
@@ -37,7 +33,7 @@ public class RedAllianceTele extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-
+        panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
         follower = Constants.createFollower(hardwareMap);
         follower.startTeleopDrive(true);
         follower.update();
@@ -53,8 +49,8 @@ public class RedAllianceTele extends LinearOpMode {
         cameraAlign = new CameraAlign(hardwareMap);
         distanceEstimator = new DistanceEstimator(
                 limelight,
-                6.0,
-                11.7,
+                0.0,
+                15.5,
                 29.5
         );
 
@@ -68,29 +64,32 @@ public class RedAllianceTele extends LinearOpMode {
 
         while (opModeIsActive()) {
 
-            follower.setTeleOpDrive(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x, true);
             follower.update();
 
             Pose pose = follower.getPose();
-
             double headingDeg = Math.toDegrees(pose.getHeading());
             double error = desiredAngleDeg - headingDeg;
 
             if(gamepad2.right_trigger > 0.1){
-                while (gamepad2.right_trigger > 0.1){
-                    acc.startNearShoot();
-                    acc.Goal();
-                }
-            } else if (gamepad2.y){
+                acc.startNearShoot();
+                acc.shootThree();
+            } else if (gamepad2.a){
                 acc.rev();
+            } else if (gamepad2.y){
+                acc.revfar();
             } else if(gamepad2.left_trigger > 0.1){
-                while (gamepad2.left_trigger > 0.1){
-                    acc.startFarShoot();
-                    acc.shoot();
-                }
+                acc.startFarShoot();
+                acc.shootThree();
             }else {
                 acc.stopShooter();
             }
+
+            follower.setTeleOpDrive(
+                    -gamepad1.left_stick_y * 0.95,
+                    -gamepad1.left_stick_x * 0.95,
+                    -gamepad1.right_stick_x * 0.6,
+                    true
+            );
 
             if(gamepad1.y){
                 lock.setPosition(0.2);
@@ -131,6 +130,8 @@ public class RedAllianceTele extends LinearOpMode {
                     isTeleOpDriveStarted = true;
                 }
             }
+            telemetry.addData("Velo", acc.getShooterVelocity());
+            telemetry.addData("Heading", headingDeg);
             telemetry.update();
 
         }

@@ -1,12 +1,15 @@
-package org.firstinspires.ftc.teamcode.TeleOp;
+package org.firstinspires.ftc.teamcode.NotNecessary;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.Hardware.Acc;
+import org.firstinspires.ftc.teamcode.Mechanism.Acc;
 import org.firstinspires.ftc.teamcode.Vision.LimelightAligner;
 
 
+
+@Disabled
 @TeleOp
 public class TeleOpFull extends LinearOpMode {
     LimelightAligner aligner;
