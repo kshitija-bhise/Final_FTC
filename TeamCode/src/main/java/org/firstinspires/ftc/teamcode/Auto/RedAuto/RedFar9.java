@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.Mechanism.Acc;
+import org.firstinspires.ftc.teamcode.Mechanism.PoseMemory;
 import org.firstinspires.ftc.teamcode.Util.Wait;
 import org.firstinspires.ftc.teamcode.Vision.CameraAlign;
 import org.firstinspires.ftc.teamcode.Vision.LimelightAligner;
@@ -160,6 +161,8 @@ public class RedFar9 extends OpMode {
             pathState++;
             follower.followPath(paths.getPath(pathState));
         }
+        Pose currentPose = follower.getPose();
+        PoseMemory.savePose(currentPose);
         // Log values to Panels and Driver Station
         panelsTelemetry.debug("Path State", pathState);
         panelsTelemetry.debug("X", follower.getPose().getX());

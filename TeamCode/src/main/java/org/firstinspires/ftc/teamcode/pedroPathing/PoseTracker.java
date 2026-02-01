@@ -24,7 +24,7 @@ public class PoseTracker extends LinearOpMode {
                 .pinpointLocalizer(localizerConstants)
                 .build();
 
-        Pose startingPose = new Pose(56, 8, Math.toRadians(270));
+            Pose startingPose = new Pose(33.5, 137.0, Math.toRadians(0));
         follower.setPose(startingPose);
 
         telemetry.addLine("Pose Tracker Initialized");

@@ -72,7 +72,7 @@ public class RedAllianceTele extends LinearOpMode {
 
             if(gamepad2.right_trigger > 0.1){
                 acc.startNearShoot();
-                acc.shootThree();
+                acc.ContinousShoot();
             } else if (gamepad2.a){
                 acc.rev();
             } else if (gamepad2.y){

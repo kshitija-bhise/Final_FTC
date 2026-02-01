@@ -70,17 +70,16 @@ public class BlueAllianceTele extends LinearOpMode {
             double headingDeg = Math.toDegrees(pose.getHeading());
             double error = desiredAngleDeg - headingDeg;
 
-            if(gamepad2.right_trigger > 0.1){
-                    acc.startNearShoot();
-                    acc.shootThree();
-            } else if (gamepad2.a){
+            if(gamepad2.right_trigger > 0.5) {
+                acc.ContinousShoot();
+            }
+             else if (gamepad2.a){
+                acc.startNearShoot();
                 acc.rev();
             } else if (gamepad2.y){
+                acc.startFarShoot();
                 acc.revfar();
-            } else if(gamepad2.left_trigger > 0.1){
-                    acc.startFarShoot();
-                    acc.shootThree();
-            }else {
+            } else {
                 acc.stopShooter();
             }
 
@@ -97,10 +96,13 @@ public class BlueAllianceTele extends LinearOpMode {
         if(gamepad1.y){
                 lock.setPosition(0.2);
             }
+
             if(gamepad2.left_bumper){
                 acc.startIntake();
-            } else if (gamepad2.right_bumper) {
+            } else if (gamepad2.b) {
                 acc.OutTake();
+            }else if(gamepad2.right_bumper) {
+                acc.TriggerShoot();
             } else{
                 acc.stopIntake();
             }
@@ -133,6 +135,8 @@ public class BlueAllianceTele extends LinearOpMode {
                     isTeleOpDriveStarted = true;
                 }
             }
+
+
 
             telemetry.addData("Velocity", acc.getShooterVelocity());
             telemetry.addData("Heading", headingDeg);

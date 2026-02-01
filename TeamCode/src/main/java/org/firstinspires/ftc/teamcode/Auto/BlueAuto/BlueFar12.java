@@ -111,17 +111,17 @@ public class BlueFar12 extends OpMode {
         follower.update();
         if(!follower.isBusy()){
             if(pathState == 0 || pathState == 3){
-                acc.startFarShoot();
+                acc.startFarShootAuto();
                 while(!acc.Goal()){
-                    acc.startFarShoot();
+                    acc.startFarShootAuto();
                 }
                 Wait.mySleep(100);
                 acc.stopShooter();
             }
             if(pathState == 6 || pathState == 9){
-                acc.startNearShoot();
+                acc.startNearShootAuto();
                 while(!acc.Goal()){
-                    acc.startNearShoot();
+                    acc.startNearShootAuto();
                 }
                 Wait.mySleep(100);
                 acc.stopShooter();

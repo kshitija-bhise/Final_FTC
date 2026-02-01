@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Mechanism;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad1;
 import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.follower;
 import static java.lang.Thread.sleep;
 
@@ -18,8 +19,10 @@ import org.firstinspires.ftc.teamcode.Util.Wait;
 
 @Configurable
 public class Acc {
-    public static double shooterFarVelocity = 1400;   //1350
-    public static double shooterNearVelocity = 1150;
+    public static double shooterFarVelocity = 1470;   //1350
+    public static double shooterFarVelocityAuto = 1350;   //1350
+    public static double shooterNearVelocity = 1260;
+    public static double shooterNearVelocityAuto = 1260;
     public double targetVelocity = 0;
     public static int targetPos = 300;
     private DcMotorEx SL;
@@ -30,7 +33,7 @@ public class Acc {
     double a = 0.5;
     ElapsedTime parallelShoot;
 
-    public static double kp = 200;
+    public static double kp = 500;
     public static double ki = 0;
     public static double kd = 70;
     public static double kf = 11.9;
@@ -54,6 +57,21 @@ public class Acc {
         SL.setVelocityPIDFCoefficients(kp, ki, kd, kf);
         SR.setVelocityPIDFCoefficients(kp, ki, kd, kf);
     }
+
+
+    public void startNearShootAuto(){
+        SL.setVelocity(shooterNearVelocityAuto);
+        SR.setVelocity(shooterNearVelocityAuto);
+        targetVelocity = shooterNearVelocityAuto;
+    }
+
+    public void startFarShootAuto(){
+        SL.setVelocity(shooterFarVelocityAuto);
+        SR.setVelocity(shooterFarVelocityAuto);
+        targetVelocity = shooterFarVelocityAuto;
+    }
+
+
 
     public void startFarShoot() {
         SL.setVelocity(shooterFarVelocity);
@@ -87,11 +105,19 @@ public class Acc {
     public void revfar() {
         SL.setVelocity(1400);
         SR.setVelocity(1400);
+        targetVelocity = 1400;
+
     }
 
     public void rev() {
-        SL.setVelocity(1200);
-        SR.setVelocity(1200);
+        SL.setVelocity(1260);
+        SR.setVelocity(1260);
+        targetVelocity = 1260;
+    }
+
+    public void AutoRev() {
+        SL.setVelocity(1000);
+        SR.setVelocity(1000);
     }
 
     public void OutTake() {
@@ -117,6 +143,74 @@ public class Acc {
         return false;
     }
 
+    public void ShootThree() {
+        if (Math.abs(getShooterVelocity() - targetVelocity) < 30) {
+            lightServo.setPosition(a);
+            for (int i = 0; i < 4; i++) {
+                SW.setPower(1);
+                Wait.mySleep(150);
+                SW.setPower(-1);
+                IN.setPower(0.9);
+                Wait.mySleep(250);
+            }
+        }
+    }
+
+
+    public void ContinousShoot() {
+        telemetryM.addData("Velocity", getShooterVelocity());
+        telemetryM.update();
+        if (Math.abs(getShooterVelocity() - targetVelocity) < 30) {
+            lightServo.setPosition(a);
+            for (int i = 0; i < 4; i++) {
+                SW.setPower(1);
+                IN.setPower(0.9);
+                Wait.mySleep(400);
+            }
+        }
+    }
+
+
+    public void ContinuousShootFar() {
+
+        SL.setVelocity(targetVelocity);
+
+        for (int i = 0; i < 3; i++) {
+
+            // Wait until flywheel is ready
+            while (Math.abs(getShooterVelocity() - targetVelocity) > 30) {
+
+                telemetryM.addData("Velocity", getShooterVelocity());
+                telemetryM.update();
+            }
+            IN.setPower(0.85);
+            SW.setPower(1);
+            Wait.mySleep(900);   // just enough to feed one ball
+        }
+    }
+
+    public void TriggerShoot(){
+        if (Math.abs(getShooterVelocity() - targetVelocity) < 30) {
+            IN.setPower(0.85);
+            SW.setPower(1);
+        }
+    }
+
+
+//    public void ContinousShootFar(){
+//        telemetryM.addData("Velocity", getShooterVelocity());
+//        telemetryM.update();
+//        if (Math.abs(getShooterVelocity() - targetVelocity) < 30) {
+//            lightServo.setPosition(a);
+//            for (int i = 0; i < 4; i++) {
+//                SW.setPower(1);
+//                IN.setPower(0.85);
+//                Wait.mySleep(600);
+//            }
+//        }
+//    }
+
+
     public boolean shootThree() {
         telemetryM.addData("Velocity",getShooterVelocity());
         telemetryM.update();
@@ -140,12 +234,9 @@ public class Acc {
         if (((Math.abs(SR.getVelocity()) + Math.abs((SL.getVelocity())) / 2)) - targetVelocity > 20) {
             lightServo.setPosition(a);
             SW.setPower(1);
-            Wait.mySleep(50);
-            startIntake();
+            IN.setVelocity(0.9);
             return true;
         } else {
-            SW.setPower(-1);
-            Wait.mySleep(150);
             lightServo.setPosition(0.277);
         }
         return false;

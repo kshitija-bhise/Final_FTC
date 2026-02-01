@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Auto.AllianceAuto;
+package org.firstinspires.ftc.teamcode.NotNecessary;
 
 import com.bylazar.configurables.annotations.Configurable;
 import com.bylazar.telemetry.PanelsTelemetry;
@@ -13,17 +13,19 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import org.firstinspires.ftc.teamcode.Mechanism.Acc;
 import org.firstinspires.ftc.teamcode.Util.Wait;
 import org.firstinspires.ftc.teamcode.Vision.CameraAlign;
+import org.firstinspires.ftc.teamcode.Vision.LimelightAligner;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 @Autonomous
 @Configurable // Panels
-public class MADBLUE extends OpMode {
+public class MADRED extends OpMode {
 
     private TelemetryManager panelsTelemetry; // Panels Telemetry instance
     public Follower follower; // Pedro Pathing follower instance
     int pathState = 0; // Current autonomous path state (state machine)
     PathChain paths;
     Acc acc;
+    LimelightAligner aligner;
     CameraAlign cameraAlign;
 
     @Override
@@ -33,55 +35,67 @@ public class MADBLUE extends OpMode {
 
         follower = Constants.createFollower(hardwareMap);
         cameraAlign = new CameraAlign(hardwareMap);
-        follower.setStartingPose(new Pose(62.000, 8.000, Math.toRadians(270)));
+        aligner = new LimelightAligner(hardwareMap);
+        follower.setStartingPose(new Pose(82.000, 8.000, Math.toRadians(270)));
 
         paths = follower
                 .pathBuilder()
                 //shoot1 == 0
                 .addPath(
-                        new BezierLine(new Pose(62.000, 8.000), new Pose(66.000, 15.000))
-                )
-                .setLinearHeadingInterpolation(Math.toRadians(270), Math.toRadians(290))
-                //align==1
+                        new BezierLine(new Pose(82.000, 8.000), new Pose(82.000, 18.000)
+                        )
+                ).setLinearHeadingInterpolation(Math.toRadians(270), Math.toRadians(248))
+
+                //align == 1
                 .addPath(
-                        new BezierLine(new Pose(66.00, 15.000), new Pose(55.000, 36.000))
-                )
-                .setLinearHeadingInterpolation(Math.toRadians(290), Math.toRadians(180))
-                //collect3 == 2
+                        new BezierLine(new Pose(82.000, 18.000), new Pose(95.000, 33.000)
+                        )
+                ).setLinearHeadingInterpolation(Math.toRadians(248), Math.toRadians(0))
+
+                //collect1 == 2
                 .addPath(
-                        new BezierLine(new Pose(55.000, 36.000), new Pose(15.000, 36.000))
-                )
-                .setConstantHeadingInterpolation(Math.toRadians(180))
-//                   //shoot2 == 3
+                        new BezierLine(new Pose(95.000, 33.000), new Pose(130.000, 33.000)
+                        )
+                ).setTangentHeadingInterpolation()
+
+                //shoot2 == 3
                 .addPath(
-                        new BezierLine(new Pose(15.000, 36.000), new Pose(66.000, 18.00))
-                )
-                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(290))
-                   //align2 == 4
+                        new BezierLine(new Pose(130.000, 33.000), new Pose(82.000, 18.000)
+                        )
+                ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(248))
+
+                //collect == 4
                 .addPath(
-                        new BezierLine(new Pose(66.000, 18.000), new Pose(9.0, 13.5))
-                )
-                .setLinearHeadingInterpolation(Math.toRadians(285), Math.toRadians(190))
-//               //shoot3 == 5
+                        new BezierLine(new Pose(82, 18), new Pose(135, 13.5)
+                        )
+                ).setLinearHeadingInterpolation(Math.toRadians(248), Math.toRadians(350))
+
+                //shoot2 == 5
                 .addPath(
-                        new BezierLine(new Pose(9.0, 13.5), new Pose(62, 15.000))
-                )
-                .setLinearHeadingInterpolation(Math.toRadians(190), Math.toRadians(295))
+                        new BezierLine(new Pose(135.000, 13.5), new Pose(82.000, 18.000)
+                        )
+                ).setLinearHeadingInterpolation(Math.toRadians(350), Math.toRadians(248))
+
                 //collect == 6
                 .addPath(
-                        new BezierLine(new Pose(62, 15), new Pose(9, 8.5))
-                )
-                .setLinearHeadingInterpolation(Math.toRadians(295), Math.toRadians(190))
-                //shoot == 7
+                        new BezierLine(new Pose(82.00, 18.0), new Pose(135.00, 8.5)
+                        )
+                ).setLinearHeadingInterpolation(Math.toRadians(248), Math.toRadians(350))
+
+                //shoot2 == 7
                 .addPath(
-                        new BezierLine(new Pose(9.0, 8.5), new Pose(62, 15.000))
-                )
-                .setLinearHeadingInterpolation(Math.toRadians(190), Math.toRadians(295))
-                // park == 8
+                        new BezierLine(new Pose(135, 8.5), new Pose(82.000, 18.000)
+                        )
+                ).setLinearHeadingInterpolation(Math.toRadians(350), Math.toRadians(248))
+
+
+                //park == 8
                 .addPath(
-                        new BezierLine(new Pose(62.000, 15.000), new Pose(30, 15))
+                        new BezierLine(new Pose(82.000, 18.000), new Pose(108, 12))
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(290), Math.toRadians(90))
+                .setLinearHeadingInterpolation(Math.toRadians(248), Math.toRadians(0))
+
+
                 .build();
 
         follower.followPath(paths.getPath(pathState));
@@ -105,7 +119,10 @@ public class MADBLUE extends OpMode {
                 acc.startIntake();
             }
 
-
+            if(pathState == 1){
+                follower.followPath(paths,false);
+                follower.setMaxPower(0.8);
+            }
 
             pathState++;
             follower.followPath(paths.getPath(pathState));

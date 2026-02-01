@@ -38,15 +38,19 @@ public class PoseMemory {
         return new Pose(lastX, lastY, lastHeading);
     }
 
-    public double getLastY(){
+    public static double getLastY(){
         return lastY;
     }
 
-    public double getLastX(){
+    public static double getLastX(){
         return lastX;
     }
 
-    public double getLastHeading(){
+    public static double getLastHeading(){
         return lastHeading;
+    }
+
+    public static boolean hasPose() {
+        return lastX != null;
     }
 }
