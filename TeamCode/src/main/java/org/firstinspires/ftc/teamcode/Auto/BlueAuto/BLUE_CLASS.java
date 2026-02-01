@@ -81,18 +81,18 @@ public class BLUE_CLASS extends LinearOpMode {
                 .setConstantHeadingInterpolation(Math.toRadians(180))
                 .build();
 
-        PathChain shoot3 =new PathBuilder(follower)
+        PathChain shoot3 = new PathBuilder(follower)
                 .addPath(
                         new BezierLine(new Pose(10.000, 64.000), new Pose(58.000, 90.000))
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(315))
                 .build();
-        PathChain park =new PathBuilder(follower)
+        PathChain park = new PathBuilder(follower)
                 .addPath(
-                new BezierLine(
-                        new Pose(58.000, 90.000),
-                        new Pose(22.000, 72.000))
-        )
+                        new BezierLine(
+                                new Pose(58.000, 90.000),
+                                new Pose(22.000, 72.000))
+                )
                 .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(90))
                 .build();
 
@@ -117,7 +117,7 @@ public class BLUE_CLASS extends LinearOpMode {
         acc.startNearShootAuto();
         runPath(shoot3, 1, 0);
         acc.Goal();
-        runPath(park,1,0);
+        runPath(park, 1, 0);
         /* ================= END ================= */
         while (opModeIsActive()) {
         }
@@ -135,6 +135,6 @@ public class BLUE_CLASS extends LinearOpMode {
         if (delayAfterMs > 0) sleep(delayAfterMs);
     }
 
-        }
-        /* ================= END ================= */
+}
+/* ================= END ================= */
 
