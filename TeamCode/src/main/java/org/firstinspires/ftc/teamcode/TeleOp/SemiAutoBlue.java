@@ -54,7 +54,6 @@ public class SemiAutoBlue extends OpMode {
             startPose = new Pose(33, 137, Math.toRadians(0));
         }
 
-
         follower = Constants.createFollower(hardwareMap);
         follower.setStartingPose(startPose);
         acc = new Acc(hardwareMap);
@@ -62,9 +61,8 @@ public class SemiAutoBlue extends OpMode {
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
 
         follower.startTeleopDrive(true);
-        Servo lock = hardwareMap.get(Servo.class,"lock");
-        lock.setPosition(0);
         limelight.pipelineSwitch(0);
+        acc.initLock();
         follower.update();
 
         poseMemory = new PoseMemory();
@@ -81,8 +79,8 @@ public class SemiAutoBlue extends OpMode {
                 .build();
 
         pathFar = () -> follower.pathBuilder() //Lazy Curve Generation
-                .addPath(new Path(new BezierLine(follower::getPose, new Pose(62, 18))))
-                .setHeadingInterpolation(HeadingInterpolator.linearFromPoint(follower::getHeading, Math.toRadians(290), 0.8))
+                .addPath(new Path(new BezierLine(follower::getPose, new Pose(62.000, 23.000))))
+                .setHeadingInterpolation(HeadingInterpolator.linearFromPoint(follower::getHeading, Math.toRadians(292), 0.8))
                 .build();
         
     }
@@ -121,46 +119,49 @@ public class SemiAutoBlue extends OpMode {
 
 
             //Automated PathFollowing
-            if (gamepad1.aWasPressed()) {
+            if (gamepad1.crossWasPressed()) {
                 follower.followPath(pathPark.get()); //Lazy Curve Generation
                 automatedDrive = true;
             }
 
-            if (gamepad1.xWasPressed()) {
+            if (gamepad1.squareWasPressed()) {
                 follower.followPath(pathFar.get());
                 automatedDrive = true;
             }
 
-            if (gamepad1.yWasPressed()) {
+            if (gamepad1.triangleWasPressed()) {
                 follower.followPath(pathNear.get());
                 automatedDrive = true;
             }
 
-            if (automatedDrive && (gamepad1.bWasPressed() || !follower.isBusy())) {
+            if (automatedDrive && (gamepad1.circleWasPressed() || !follower.isBusy())) {
                 follower.startTeleopDrive();
                 automatedDrive = false;
             }
 
             follower.setTeleOpDrive(
-                    -gamepad1.left_stick_y * 0.95,
-                    -gamepad1.left_stick_x * 0.95,
-                    -gamepad1.right_stick_x * 0.6,
+                    -gamepad1.left_stick_y * 0.75,
+                    -gamepad1.left_stick_x * 0.75,
+                    -gamepad1.right_stick_x * 0.4,
                     true
             );
             follower.update();
 
             if(gamepad2.right_trigger > 0.5) {
                 acc.ContinousShoot();
-            }
-            else if (gamepad2.a){
+            } else if (gamepad2.a){
                 acc.startNearShoot();
-                acc.rev();
             } else if (gamepad2.y){
                 acc.startFarShoot();
-                acc.revfar();
             } else {
                 acc.stopShooter();
             }
+
+        if (gamepad2.dpadDownWasPressed()){
+            acc.releaseLock();
+        }
+
+
 
 
         if(gamepad2.left_bumper){
@@ -181,7 +182,6 @@ public class SemiAutoBlue extends OpMode {
             }
             else {
                 aligner.stopMotors();
-                acc.setLED(0.611);
                 gamepad1.rumble(300);
                 gamepad2.rumble(300);
             }

@@ -143,7 +143,6 @@ public class RedFar9 extends OpMode {
 
             if(pathState == 2 || pathState == 5 || pathState == 7){
                 Wait.mySleep(500);
-                acc.setLED(0.338);
                 follower.setMaxPower(0.9);
             }else {
                 follower.setMaxPower(1);

@@ -63,4 +63,6 @@ public class Constants {
                 .build();
     }
 
+    public static double LATERAL_MULTIPLIER = 1.30;
+
 }

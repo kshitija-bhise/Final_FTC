@@ -161,7 +161,7 @@ public class RedNear12 extends OpMode {
             }
 
             if (pathState == 2 || pathState == 5 || pathState == 8){
-                acc.setLED(0.338);
+
             }
 
             pathState++;

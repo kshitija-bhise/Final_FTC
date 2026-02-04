@@ -16,13 +16,15 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Util.Wait;
 
+import java.util.concurrent.locks.Lock;
+
 
 @Configurable
 public class Acc {
     public static double shooterFarVelocity = 1470;   //1350
-    public static double shooterFarVelocityAuto = 1350;   //1350
+    public static double shooterFarVelocityAuto = 1440;   //1350
     public static double shooterNearVelocity = 1260;
-    public static double shooterNearVelocityAuto = 1260;
+    public static double shooterNearVelocityAuto = 1200;
     public double targetVelocity = 0;
     public static int targetPos = 300;
     private DcMotorEx SL;
@@ -30,6 +32,9 @@ public class Acc {
     private DcMotorEx SR;
     private DcMotorEx IN;
     private Servo lightServo;
+
+    private Servo lock;
+
     double a = 0.5;
     ElapsedTime parallelShoot;
 
@@ -47,6 +52,7 @@ public class Acc {
         IN = hardwareMap.get(DcMotorEx.class, "IN");
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
         lightServo = hardwareMap.get(Servo.class, "Light");
+        lock = hardwareMap.get(Servo.class,"lock");
 
         IN.setDirection(DcMotorSimple.Direction.REVERSE);
         SR.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -72,14 +78,12 @@ public class Acc {
     }
 
 
-
     public void startFarShoot() {
         SL.setVelocity(shooterFarVelocity);
         SR.setVelocity(shooterFarVelocity);
         targetVelocity = shooterFarVelocity;
         a = 0.722;
     }
-
 
     public void startNearShoot() {
         SL.setVelocity(shooterNearVelocity);
@@ -116,9 +120,16 @@ public class Acc {
     }
 
     public void AutoRev() {
-        SL.setVelocity(1000);
-        SR.setVelocity(1000);
+        SL.setVelocity(shooterNearVelocityAuto);
+        SR.setVelocity(shooterNearVelocityAuto);
     }
+
+    public void AutoRevFar() {
+        SL.setVelocity(shooterFarVelocityAuto);
+        SR.setVelocity(shooterFarVelocityAuto);
+    }
+
+
 
     public void OutTake() {
         IN.setPower(-0.6);
@@ -145,7 +156,6 @@ public class Acc {
 
     public void ShootThree() {
         if (Math.abs(getShooterVelocity() - targetVelocity) < 30) {
-            lightServo.setPosition(a);
             for (int i = 0; i < 4; i++) {
                 SW.setPower(1);
                 Wait.mySleep(150);
@@ -165,27 +175,37 @@ public class Acc {
             for (int i = 0; i < 4; i++) {
                 SW.setPower(1);
                 IN.setPower(0.9);
-                Wait.mySleep(400);
+                Wait.mySleep(450);
             }
         }
     }
 
-
-    public void ContinuousShootFar() {
-
-        SL.setVelocity(targetVelocity);
-
-        for (int i = 0; i < 3; i++) {
-
-            // Wait until flywheel is ready
-            while (Math.abs(getShooterVelocity() - targetVelocity) > 30) {
-
-                telemetryM.addData("Velocity", getShooterVelocity());
-                telemetryM.update();
+    public void AutoContinousShoot() {
+        telemetryM.addData("Velocity", getShooterVelocity());
+        telemetryM.update();
+        if (Math.abs(getShooterVelocity()) > targetVelocity) {
+            lightServo.setPosition(a);
+                SW.setPower(1);
+                IN.setPower(0.9);
+                Wait.mySleep(550);
             }
-            IN.setPower(0.85);
+        }
+
+
+    public void ACS() {
+        telemetryM.addData("Velocity", getShooterVelocity());
+        telemetryM.update();
+        if (Math.abs(getShooterVelocity()) > targetVelocity) {
+            lightServo.setPosition(a);
             SW.setPower(1);
-            Wait.mySleep(900);   // just enough to feed one ball
+            IN.setPower(0.9);
+            Wait.mySleep(450);
+        }
+        else{
+            while(Math.abs(getShooterVelocity()) < targetVelocity) {
+                Wait.mySleep(20);
+                ACS();
+            }
         }
     }
 
@@ -194,6 +214,14 @@ public class Acc {
             IN.setPower(0.85);
             SW.setPower(1);
         }
+    }
+
+    public void initLock(){
+       lock.setPosition(0);
+    }
+
+    public void releaseLock(){
+        lock.setPosition(0.3);
     }
 
 
@@ -232,11 +260,13 @@ public class Acc {
 
     public boolean VeloShoot() {
         if (((Math.abs(SR.getVelocity()) + Math.abs((SL.getVelocity())) / 2)) - targetVelocity > 20) {
-            lightServo.setPosition(a);
             SW.setPower(1);
-            IN.setVelocity(0.9);
+            IN.setPower(0.9);
+            Wait.mySleep(150);
             return true;
         } else {
+            IN.setVelocity(-0.9);
+            Wait.mySleep(250);
             lightServo.setPosition(0.277);
         }
         return false;

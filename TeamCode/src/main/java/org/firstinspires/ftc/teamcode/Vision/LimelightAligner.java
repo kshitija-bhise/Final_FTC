@@ -19,6 +19,7 @@ public class LimelightAligner {
 
     public LimelightAligner(HardwareMap hardwareMap) {
 
+
         LF = hardwareMap.get(DcMotor.class, "LF");
         LR = hardwareMap.get(DcMotor.class, "LR");
         RF = hardwareMap.get(DcMotor.class, "RF");
@@ -54,7 +55,7 @@ public class LimelightAligner {
             return;
         }
 
-        double minPower = 0.3;
+        double minPower = 0.5;
         if (Math.abs(turnPower) < minPower) {
             turnPower = Math.signum(turnPower) * minPower;
         }

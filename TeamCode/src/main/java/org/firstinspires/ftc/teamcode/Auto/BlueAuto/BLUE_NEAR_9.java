@@ -1,142 +1,146 @@
 package org.firstinspires.ftc.teamcode.Auto.BlueAuto;
 
-import android.health.connect.datatypes.units.Velocity;
-
-import com.bylazar.configurables.annotations.Configurable;
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
+import com.pedropathing.paths.PathBuilder;
 import com.pedropathing.paths.PathChain;
+import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.Mechanism.Acc;
 import org.firstinspires.ftc.teamcode.Mechanism.PoseMemory;
-import org.firstinspires.ftc.teamcode.Util.Wait;
-import org.firstinspires.ftc.teamcode.Vision.LimelightAligner;
+import org.firstinspires.ftc.teamcode.Vision.CameraAlign;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
-
 @Autonomous
-@Configurable // Panels
-public class BlueNear9 extends OpMode {
-
+public class BLUE_NEAR_9 extends LinearOpMode {
     private TelemetryManager panelsTelemetry; // Panels Telemetry instance
     public Follower follower; // Pedro Pathing follower instance
     int pathState = 0; // Current autonomous path state (state machine)
     PathChain paths;
     Acc acc;
-    LimelightAligner aligner;
-    PoseMemory poseMemory;
+    CameraAlign cameraAlign;
 
     @Override
-    public void init() {
-    acc  = new Acc(hardwareMap);
-        panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
-        poseMemory = new PoseMemory();
-        follower = Constants.createFollower(hardwareMap);
-        aligner = new LimelightAligner(hardwareMap);
-        follower.setStartingPose(new Pose(33.0, 137.0, Math.toRadians(0)));
+    public void runOpMode() {
 
-        paths = follower
-                .pathBuilder()
-                //shoot1 == 0
+        /* ================= INIT ================= */
+        follower = Constants.createFollower(hardwareMap);
+        cameraAlign = new CameraAlign(hardwareMap);
+        acc = new Acc(hardwareMap);
+        panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
+        Pose startPose = new Pose(34.000, 137.500, Math.toRadians(0));
+        follower.setStartingPose(startPose);
+
+        /* ================= PATHS ================= */
+        PathChain shoot1 = new PathBuilder(follower)
                 .addPath(
                         new BezierLine(new Pose(33.0, 137.0), new Pose(58.000, 90.000))
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(315))
-                //align1 == 1
+                .build();
+        PathChain align1 = new PathBuilder(follower)
                 .addPath(
                         new BezierLine(new Pose(58.000, 90.000), new Pose(55.000, 90.000))
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(315), Math.toRadians(180))
-                //Collect1 == 2
+                .build();
+
+        PathChain collect1 = new PathBuilder(follower)
                 .addPath(
                         new BezierLine(new Pose(55.000, 90.000), new Pose(18.000, 90.000))
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(180))
-                //shoot2 == 3
+                .build();
+
+        PathChain shoot2 = new PathBuilder(follower)
                 .addPath(
                         new BezierLine(new Pose(18.000, 90.000), new Pose(58.000, 90.000))
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(315))
-                //align2 == 4
+                .build();
+
+        PathChain align2 = new PathBuilder(follower)
                 .addPath(
                         new BezierLine(new Pose(58.000, 90.000), new Pose(55.000, 64.000))
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(315), Math.toRadians(180))
-                //collect2 == 5
+                .build();
+
+        PathChain collect2 = new PathBuilder(follower)
                 .addPath(
                         new BezierLine(new Pose(55.000, 64.000), new Pose(10.000, 64.000))
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(180))
-                //shoot3 == 6
+                .build();
+
+        PathChain shoot3 = new PathBuilder(follower)
                 .addPath(
                         new BezierLine(new Pose(10.000, 64.000), new Pose(58.000, 90.000))
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(315))
-                //openGate1 == 9
+                .build();
+        PathChain park = new PathBuilder(follower)
                 .addPath(
                         new BezierLine(
                                 new Pose(58.000, 90.000),
                                 new Pose(22.000, 72.000))
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(90))
-                .setBrakingStart(0.1)
                 .build();
 
+        /* ================= START ================= */
+        waitForStart();
 
-        // Build paths
-        follower.followPath(paths.getPath(pathState));
-        panelsTelemetry.debug("Status", "Initialized");
-        panelsTelemetry.update(telemetry);
-    }
-
-    @Override
-    public void loop() {
-        follower.update();
-        if(!follower.isBusy()){
-            acc.AutoRev();
-            if(pathState == 0 || pathState == 3 || pathState == 6){
-                acc.startNearShoot();
-                while (!acc.Goal()) {
-                    acc.startNearShoot();
-                }
-                Wait.mySleep(200);
-                acc.stopShooter();
-                acc.startIntake();
-            }
-
-            if (pathState == 1 || pathState == 4 || pathState == 7){
-                follower.followPath(paths,false);
-                follower.setMaxPower(0.8);
-            }else {
-                follower.setMaxPower(1);
-            }
-
-            if (pathState == 2 || pathState == 5 || pathState == 8){
-                acc.slowIntake();
-            }
-            if (pathState == 9){
-                acc.stopShooter();
-            }
-            pathState++;
-            follower.followPath(paths.getPath(pathState));
+        /* ================= AUTON SEQUENCE ================= */
+        acc.AutoRev();
+        runPath(shoot1, 1, 100);
+        acc.startNearShootAuto();
+        acc.AutoContinousShoot();
+        acc.startIntake();
+        runPath(align1, 1, 0);
+        runPath(collect1, 0.8, 100);
+        acc.AutoRev();
+        runPath(shoot2, 1, 100);
+        acc.startNearShootAuto();
+        acc.AutoContinousShoot();
+        acc.startIntake();
+        runPath(align2, 1, 0);
+        runPath(collect2, 0.8, 100);
+        acc.AutoRev();
+        runPath(shoot3, 1, 100);
+        acc.startNearShootAuto();
+        acc.AutoContinousShoot();
+        acc.stopShooter();
+        acc.stopIntake();
+        runPath(park, 1, 0);
+        /* ================= END ================= */
+        while (opModeIsActive()) {
         }
-
         Pose currentPose = follower.getPose();
         PoseMemory.savePose(currentPose);
-
-
-        // Log values to Panels and Driver Station
-        panelsTelemetry.debug("Velocity", acc.getShooterVelocity());
-        panelsTelemetry.debug("Path State", pathState);
-        panelsTelemetry.debug("X", follower.getPose().getX());
-        panelsTelemetry.debug("Y", follower.getPose().getY());
-        panelsTelemetry.debug("Heading", follower.getPose().getHeading());
-        panelsTelemetry.update(telemetry);
     }
+
+    /* ================= PATH RUNNER ================= */
+    private void runPath(PathChain path, double power, long delayAfterMs) {
+        follower.setMaxPower(power);
+        follower.followPath(path);
+
+        while (opModeIsActive() && follower.isBusy()) {
+            follower.update();
+        }
+
+        if (delayAfterMs > 0) sleep(delayAfterMs);
+    }
+
 }
+/* ================= END ================= */
+

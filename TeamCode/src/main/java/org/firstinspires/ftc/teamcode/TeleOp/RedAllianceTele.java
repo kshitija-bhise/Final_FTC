@@ -5,6 +5,7 @@ import com.bylazar.telemetry.TelemetryManager;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -15,7 +16,7 @@ import org.firstinspires.ftc.teamcode.Vision.CameraAlign;
 import org.firstinspires.ftc.teamcode.Vision.DistanceEstimator;
 import org.firstinspires.ftc.teamcode.Vision.LimelightAligner;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-
+@Disabled
 @TeleOp(name = "Red Alliance TeleOp")
 public class RedAllianceTele extends LinearOpMode {
 
@@ -55,8 +56,6 @@ public class RedAllianceTele extends LinearOpMode {
         );
 
         follower.startTeleopDrive(true);
-        Servo lock = hardwareMap.get(Servo.class,"lock");
-        lock.setPosition(0);
         limelight.pipelineSwitch(1);
         follower.update();
 
@@ -91,9 +90,7 @@ public class RedAllianceTele extends LinearOpMode {
                     true
             );
 
-            if(gamepad1.y){
-                lock.setPosition(0.2);
-            }
+
             if(gamepad2.left_bumper){
                 acc.startIntake();
             } else if (gamepad2.right_bumper) {
