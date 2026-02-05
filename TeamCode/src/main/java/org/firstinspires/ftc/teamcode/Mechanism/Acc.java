@@ -14,6 +14,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.Util.ShooterState;
 import org.firstinspires.ftc.teamcode.Util.Wait;
 
 import java.util.concurrent.locks.Lock;
@@ -44,6 +45,12 @@ public class Acc {
     public static double kf = 11.9;
     TelemetryManager telemetryM;
 
+    private ShooterState shooterState = ShooterState.IDLE;
+
+    private static final double IDLE_VELOCITY_THRESHOLD = 40;
+    private static final double VELOCITY_TOLERANCE = 30;
+
+
 
     public Acc(HardwareMap hardwareMap) {
         SL = hardwareMap.get(DcMotorEx.class, "SL");
@@ -63,7 +70,6 @@ public class Acc {
         SL.setVelocityPIDFCoefficients(kp, ki, kd, kf);
         SR.setVelocityPIDFCoefficients(kp, ki, kd, kf);
     }
-
 
     public void startNearShootAuto(){
         SL.setVelocity(shooterNearVelocityAuto);
@@ -129,6 +135,35 @@ public class Acc {
         SR.setVelocity(shooterFarVelocityAuto);
     }
 
+    public void updateShooterState() {
+        double vL = Math.abs(SL.getVelocity());
+        double vR = Math.abs(SR.getVelocity());
+        double avgVelocity = (vL + vR) / 2.0;
+
+        if (avgVelocity < IDLE_VELOCITY_THRESHOLD) {
+            shooterState = ShooterState.IDLE;
+            return;
+        }
+
+        if (targetVelocity > 0 &&
+                Math.abs(avgVelocity - targetVelocity) <= VELOCITY_TOLERANCE) {
+            shooterState = ShooterState.READY;
+        } else {
+            shooterState = ShooterState.REVVING;
+        }
+    }
+
+    public boolean isShooterIdle() {
+        return shooterState == ShooterState.IDLE;
+    }
+
+    public boolean isShooterReady() {
+        return shooterState == ShooterState.READY;
+    }
+
+    public ShooterState getShooterState() {
+        return shooterState;
+    }
 
 
     public void OutTake() {
@@ -154,17 +189,17 @@ public class Acc {
         return false;
     }
 
-    public void ShootThree() {
-        if (Math.abs(getShooterVelocity() - targetVelocity) < 30) {
-            for (int i = 0; i < 4; i++) {
-                SW.setPower(1);
-                Wait.mySleep(150);
-                SW.setPower(-1);
-                IN.setPower(0.9);
-                Wait.mySleep(250);
-            }
-        }
-    }
+//    public void ShootThree() {
+//        if (Math.abs(getShooterVelocity() - targetVelocity) < 30) {
+//            for (int i = 0; i < 4; i++) {
+//                SW.setPower(1);
+//                Wait.mySleep(150);
+//                SW.setPower(-1);
+//                IN.setPower(0.9);
+//                Wait.mySleep(250);
+//            }
+//        }
+//    }
 
 
     public void ContinousShoot() {
@@ -172,7 +207,7 @@ public class Acc {
         telemetryM.update();
         if (Math.abs(getShooterVelocity() - targetVelocity) < 30) {
             lightServo.setPosition(a);
-            for (int i = 0; i < 4; i++) {
+            for (int i = 0; i < 3; i++) {
                 SW.setPower(1);
                 IN.setPower(0.9);
                 Wait.mySleep(450);
@@ -181,33 +216,30 @@ public class Acc {
     }
 
     public void AutoContinousShoot() {
-        telemetryM.addData("Velocity", getShooterVelocity());
-        telemetryM.update();
         if (Math.abs(getShooterVelocity()) > targetVelocity) {
-            lightServo.setPosition(a);
                 SW.setPower(1);
-                IN.setPower(0.9);
+                IN.setPower(1);
                 Wait.mySleep(550);
             }
         }
 
 
-    public void ACS() {
-        telemetryM.addData("Velocity", getShooterVelocity());
-        telemetryM.update();
-        if (Math.abs(getShooterVelocity()) > targetVelocity) {
-            lightServo.setPosition(a);
-            SW.setPower(1);
-            IN.setPower(0.9);
-            Wait.mySleep(450);
-        }
-        else{
-            while(Math.abs(getShooterVelocity()) < targetVelocity) {
-                Wait.mySleep(20);
-                ACS();
-            }
-        }
-    }
+//    public void ACS() {
+//        telemetryM.addData("Velocity", getShooterVelocity());
+//        telemetryM.update();
+//        if (Math.abs(getShooterVelocity()) > targetVelocity) {
+//            lightServo.setPosition(a);
+//            SW.setPower(1);
+//            IN.setPower(0.9);
+//            Wait.mySleep(450);
+//        }
+//        else{
+//            while(Math.abs(getShooterVelocity()) < targetVelocity) {
+//                Wait.mySleep(20);
+//                ACS();
+//            }
+//        }
+//    }
 
     public void TriggerShoot(){
         if (Math.abs(getShooterVelocity() - targetVelocity) < 30) {
