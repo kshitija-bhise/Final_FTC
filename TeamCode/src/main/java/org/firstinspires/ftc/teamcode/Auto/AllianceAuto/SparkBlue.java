@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Auto.RedAuto;
+package org.firstinspires.ftc.teamcode.Auto.AllianceAuto;
 
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.Vision.CameraAlign;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 @Autonomous
-public class RED_FAR_12 extends LinearOpMode {
+public class SparkBlue extends LinearOpMode {
     private TelemetryManager panelsTelemetry; // Panels Telemetry instance
 
     public Follower follower; // Pedro Pathing follower instance
@@ -31,7 +31,7 @@ public class RED_FAR_12 extends LinearOpMode {
         cameraAlign = new CameraAlign(hardwareMap);
         acc = new Acc(hardwareMap);
         panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
-        Pose startPose = new Pose(82.000, 8.000, Math.toRadians(270));
+        Pose startPose = new Pose(62.000, 8.000, Math.toRadians(270));
         follower.setStartingPose(startPose);
 
         acc.updateShooterState();
@@ -39,85 +39,97 @@ public class RED_FAR_12 extends LinearOpMode {
         /* ================= PATHS ================= */
         PathChain shoot1 = new PathBuilder(follower)
                 .addPath(
-                        new BezierLine(new Pose(82.000, 8.000), new Pose(83.500, 23.000)
-                        )
-                ).setLinearHeadingInterpolation(Math.toRadians(270), Math.toRadians(245))
+                        new BezierLine(new Pose(62.000, 8.000), new Pose(62.000, 23.000))
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(270), Math.toRadians(293))
                 .build();
 
         PathChain align1 = new PathBuilder(follower)
                 .addPath(
-                        new BezierLine(new Pose(83.500, 23.000), new Pose(95.000, 33.000)
-                        )
-                ).setLinearHeadingInterpolation(Math.toRadians(245), Math.toRadians(0))
+                        new BezierLine(new Pose(62.00, 23.000), new Pose(55.000, 36.000))
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(293), Math.toRadians(180))
                 .build();
 
         PathChain collect1 = new PathBuilder(follower)
                 .addPath(
-                        new BezierLine(new Pose(95.000, 33.000), new Pose(130.000, 33.000)
-                        )
+                        new BezierLine(new Pose(55.000, 36.000), new Pose(15.000, 36.000))
                 ).setTangentHeadingInterpolation()
                 .build();
 
         PathChain shoot2 = new PathBuilder(follower)
                 .addPath(
-                new BezierLine(new Pose(130.000, 33.000), new Pose(83.500, 23.000)
+                        new BezierLine(new Pose(15.000, 36.000), new Pose(62.000, 23.00))
                 )
-        ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(245))
+                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(293))
                 .build();
 
         PathChain align2 = new PathBuilder(follower)
                 .addPath(
-                        new BezierLine(new Pose(83.500, 23.000), new Pose(95.000, 57.000)
-                        )
-                ).setLinearHeadingInterpolation(Math.toRadians(245), Math.toRadians(0))
+                        new BezierLine(new Pose(62.000, 23.000), new Pose(55.000, 63.000))
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(293), Math.toRadians(180))
                 .build();
 
         PathChain collect2 = new PathBuilder(follower)
                 .addPath(
-                        new BezierLine(new Pose(95.000, 57.000), new Pose(130.000, 57.000)
-                        )
-                ).setConstantHeadingInterpolation(0)
+                        new BezierLine(new Pose(55.000, 63.000), new Pose(10.000, 63.000))
+                )
+                .setConstantHeadingInterpolation(Math.toRadians(180))
                 .build();
 
         PathChain shoot3 = new PathBuilder(follower)
                 .addPath(
-                        new BezierLine(new Pose(130.000, 57.000), new Pose(83.500, 23.000)
-                        )
-                ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(245))
+                        new BezierLine(new Pose(10.000, 63.000), new Pose(62.000, 23.000))
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(293))
                 .build();
-        
+
         PathChain collect3 = new PathBuilder(follower)
                 .addPath(
-                        new BezierLine(new Pose(83.500, 23.000), new Pose(135, 12.5)
-                        )
-                ).setLinearHeadingInterpolation(Math.toRadians(245), Math.toRadians(350))
+                        new BezierLine(new Pose(62.000, 23.000), new Pose(9.0, 13.5))
+                )
+                .setTangentHeadingInterpolation()
                 .build();
 
         PathChain shoot4 = new PathBuilder(follower)
                 .addPath(
-                        new BezierLine(new Pose(135.000, 12.5), new Pose(83.500, 23.000)
-                        )
-                ).setLinearHeadingInterpolation(Math.toRadians(350), Math.toRadians(245))
+                        new BezierLine(new Pose(9.0, 13.5), new Pose(62, 23.000))
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(190), Math.toRadians(293))
                 .build();
-        
+
         PathChain collect4 = new PathBuilder(follower)
                 .addPath(
-                        new BezierLine(new Pose(83.500, 23.000), new Pose(135.00, 6.5)
-                        )
-                ).setLinearHeadingInterpolation(Math.toRadians(245), Math.toRadians(355))
+                        new BezierLine(new Pose(62, 23), new Pose(9, 8.5))
+                )
+                .setTangentHeadingInterpolation()
                 .build();
-        
+
         PathChain shoot5 = new PathBuilder(follower)
                 .addPath(
-                        new BezierLine(new Pose(135, 6.5), new Pose(83.500, 23.000)
-                        )
-                ).setLinearHeadingInterpolation(Math.toRadians(355), Math.toRadians(245))
+                        new BezierLine(new Pose(9.0, 8.5), new Pose(62, 23.000))
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(190), Math.toRadians(293))
+                .build();
+        PathChain collect5 = new PathBuilder(follower)
+                .addPath(
+                        new BezierLine(new Pose(62, 23), new Pose(9, 23))
+                )
+                .setTangentHeadingInterpolation()
+                .build();
+
+        PathChain shoot6 = new PathBuilder(follower)
+                .addPath(
+                        new BezierLine(new Pose(9.0, 23), new Pose(62, 23.000))
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(293))
                 .build();
         PathChain park = new PathBuilder(follower)
                 .addPath(
-        new BezierLine(new Pose(83.500, 23.000), new Pose(108, 12))
+                        new BezierLine(new Pose(62.000, 23.000), new Pose(30, 15))
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(245), Math.toRadians(0))
+                .setLinearHeadingInterpolation(Math.toRadians(293), Math.toRadians(180))
                 .build();
 
         /* ================= START ================= */
@@ -136,13 +148,13 @@ public class RED_FAR_12 extends LinearOpMode {
         acc.startFarShootAuto();;
         acc.AutoContinousShoot();
         acc.startIntake();
-        runPath(align2, 1, 0);
-        runPath(collect2, 0.7, 100);
-        acc.AutoRevFar();
-        runPath(shoot3, 0.8, 500);
-        acc.startFarShootAuto();
-        acc.AutoContinousShoot();
-        acc.startIntake();
+//        runPath(align2, 1, 0);
+//        runPath(collect2, 0.7, 100);
+//        acc.AutoRevFar();
+//        runPath(shoot3, 0.8, 500);
+//        acc.startFarShootAuto();
+//        acc.AutoContinousShoot();
+//        acc.startIntake();
         runPath(collect3, 1, 500);
         acc.AutoRevFar();
         runPath(shoot4, 0.8, 500);
@@ -152,6 +164,12 @@ public class RED_FAR_12 extends LinearOpMode {
         runPath(collect4, 1, 500);
         acc.AutoRevFar();
         runPath(shoot5, 0.8, 500);
+        acc.startFarShootAuto();
+        acc.AutoContinousShoot();
+        acc.startIntake();
+        runPath(collect5, 1, 500);
+        acc.AutoRevFar();
+        runPath(shoot6, 0.8, 500);
         acc.startFarShootAuto();
         acc.AutoContinousShoot();
         acc.stopShooter();

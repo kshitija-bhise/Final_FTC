@@ -63,7 +63,7 @@ public class BLUE_NEAR_12 extends LinearOpMode {
 
         PathChain shoot2 = new PathBuilder(follower)
                 .addPath(
-                        new BezierLine(new Pose(13,78), new Pose(57.000, 86.000))
+                        new BezierLine(new Pose(14.000, 76.000), new Pose(57.000, 86.000))
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(270), Math.toRadians(315))
                 .build();
@@ -124,8 +124,8 @@ public class BLUE_NEAR_12 extends LinearOpMode {
                 .addPath(
                         new BezierCurve(
                                 new Pose(18.000, 90.000),
-                                new Pose(35.000, 84.000),
-                                new Pose(13.000, 78.000)
+                                new Pose(45.000, 84.000),
+                                new Pose(14.000, 76.000)
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(270))
 

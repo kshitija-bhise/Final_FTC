@@ -177,7 +177,7 @@ public class SemiAutoRed extends OpMode {
             if (!aligner.isAligned()) {
                 aligner.alignToAprilTag();
             }
-            else {
+             else {
                 aligner.stopMotors();
                 gamepad1.rumble(300);
                 gamepad2.rumble(300);
@@ -187,7 +187,8 @@ public class SemiAutoRed extends OpMode {
         telemetryM.debug("position", follower.getPose());
         telemetry.addData("X coordinate", follower.getPose().getX());
         telemetry.addData("Y coordinate", follower.getPose().getY());
-        telemetryM.debug("velocity", follower.getVelocity());
+        telemetry.addData("velocity L", acc.getShooterVelocity());
+        telemetry.addData("velocity R", acc.getShooterRVelocity());
         telemetryM.debug("automatedDrive", automatedDrive);
         telemetry.addData("power", follower.getMaxPowerScaling());
         telemetry.update();

@@ -22,8 +22,8 @@ import java.util.concurrent.locks.Lock;
 
 @Configurable
 public class Acc {
-    public static double shooterFarVelocity = 1470;   //1350
-    public static double shooterFarVelocityAuto = 1440;   //1350
+    public static double shooterFarVelocity = 1450;   //1350
+    public static double shooterFarVelocityAuto = 1420;   //1350
     public static double shooterNearVelocity = 1260;
     public static double shooterNearVelocityAuto = 1200;
     public double targetVelocity = 0;
@@ -315,6 +315,10 @@ public class Acc {
 
     public double getShooterVelocity() {
         return SL.getVelocity();
+    }
+
+    public double getShooterRVelocity() {
+        return SR.getVelocity();
     }
 
 

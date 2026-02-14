@@ -70,14 +70,14 @@ public class BLUE_NEAR_15 extends LinearOpMode {
                         new BezierCurve(
                                 new Pose(58, 90),
                                 new Pose(45,45),
-                                new Pose(13.5, 69)
+                                new Pose(13.5, 71)
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(315), Math.toRadians(140))
                 .build();
         PathChain comeback = new PathBuilder(follower)
                 .addPath(
                         new BezierLine(
-                                new Pose(13.5, 69),
+                                new Pose(13.5, 71),
                                 new Pose(10.5, 67)
                         )
                 ).setConstantHeadingInterpolation(Math.toRadians(140))

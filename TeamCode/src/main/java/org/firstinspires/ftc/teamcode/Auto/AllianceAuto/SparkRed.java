@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Auto.RedAuto;
+package org.firstinspires.ftc.teamcode.Auto.AllianceAuto;
 
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.Vision.CameraAlign;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 @Autonomous
-public class RED_FAR_12 extends LinearOpMode {
+public class SparkRed extends LinearOpMode {
     private TelemetryManager panelsTelemetry; // Panels Telemetry instance
 
     public Follower follower; // Pedro Pathing follower instance
@@ -60,9 +60,9 @@ public class RED_FAR_12 extends LinearOpMode {
 
         PathChain shoot2 = new PathBuilder(follower)
                 .addPath(
-                new BezierLine(new Pose(130.000, 33.000), new Pose(83.500, 23.000)
-                )
-        ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(245))
+                        new BezierLine(new Pose(130.000, 33.000), new Pose(83.500, 23.000)
+                        )
+                ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(245))
                 .build();
 
         PathChain align2 = new PathBuilder(follower)
@@ -85,12 +85,12 @@ public class RED_FAR_12 extends LinearOpMode {
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(245))
                 .build();
-        
+
         PathChain collect3 = new PathBuilder(follower)
                 .addPath(
                         new BezierLine(new Pose(83.500, 23.000), new Pose(135, 12.5)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(245), Math.toRadians(350))
+                ).setTangentHeadingInterpolation()
                 .build();
 
         PathChain shoot4 = new PathBuilder(follower)
@@ -99,23 +99,36 @@ public class RED_FAR_12 extends LinearOpMode {
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(350), Math.toRadians(245))
                 .build();
-        
+
         PathChain collect4 = new PathBuilder(follower)
                 .addPath(
                         new BezierLine(new Pose(83.500, 23.000), new Pose(135.00, 6.5)
                         )
-                ).setLinearHeadingInterpolation(Math.toRadians(245), Math.toRadians(355))
+                ).setTangentHeadingInterpolation()
                 .build();
-        
+
         PathChain shoot5 = new PathBuilder(follower)
                 .addPath(
                         new BezierLine(new Pose(135, 6.5), new Pose(83.500, 23.000)
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(355), Math.toRadians(245))
                 .build();
+        PathChain collect5 = new PathBuilder(follower)
+                .addPath(
+                        new BezierLine(new Pose(83.500, 23.000), new Pose(135.00, 23)
+                        )
+                ).setTangentHeadingInterpolation()
+                .build();
+
+        PathChain shoot6 = new PathBuilder(follower)
+                .addPath(
+                        new BezierLine(new Pose(135, 23), new Pose(83.500, 23.000)
+                        )
+                ).setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(245))
+                .build();
         PathChain park = new PathBuilder(follower)
                 .addPath(
-        new BezierLine(new Pose(83.500, 23.000), new Pose(108, 12))
+                        new BezierLine(new Pose(83.500, 23.000), new Pose(108, 12))
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(245), Math.toRadians(0))
                 .build();
@@ -136,13 +149,13 @@ public class RED_FAR_12 extends LinearOpMode {
         acc.startFarShootAuto();;
         acc.AutoContinousShoot();
         acc.startIntake();
-        runPath(align2, 1, 0);
-        runPath(collect2, 0.7, 100);
-        acc.AutoRevFar();
-        runPath(shoot3, 0.8, 500);
-        acc.startFarShootAuto();
-        acc.AutoContinousShoot();
-        acc.startIntake();
+//        runPath(align2, 1, 0);
+//        runPath(collect2, 0.7, 100);
+//        acc.AutoRevFar();
+//        runPath(shoot3, 0.8, 500);
+//        acc.startFarShootAuto();
+//        acc.AutoContinousShoot();
+//        acc.startIntake();
         runPath(collect3, 1, 500);
         acc.AutoRevFar();
         runPath(shoot4, 0.8, 500);
@@ -152,6 +165,12 @@ public class RED_FAR_12 extends LinearOpMode {
         runPath(collect4, 1, 500);
         acc.AutoRevFar();
         runPath(shoot5, 0.8, 500);
+        acc.startFarShootAuto();
+        acc.AutoContinousShoot();
+        acc.startIntake();
+        runPath(collect5, 1, 500);
+        acc.AutoRevFar();
+        runPath(shoot6, 0.8, 500);
         acc.startFarShootAuto();
         acc.AutoContinousShoot();
         acc.stopShooter();
